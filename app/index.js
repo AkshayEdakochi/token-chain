@@ -6,8 +6,10 @@ const HTTP_PORT = process.env.HTTP_PORT || '3001';
 const TransactionPool = require('../wallet/transaction-pool');
 const Wallet = require('../wallet');
 const Admin = require('../admin');
+const  cors = require('cors');
 
 const app = express();
+app.use(cors());
 const bc = new Blockchain();
 const tp = new TransactionPool();
 const p2p = new P2pServer(bc,tp);
@@ -16,7 +18,7 @@ const admin = new Admin(bc,tp,buyerWallet,p2p);
 
 
 
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 
 //will give the blocks in the blockchain
 app.get('/blocks', (req,res) => {
@@ -60,6 +62,16 @@ app.get('/holdings', (req,res) =>{
 
 app.get('/market-place', (req,res) => {
     res.json(Admin.showMarketPlace());
+});
+
+app.get('/http-port', (req,res) => {
+    console.log(HTTP_PORT);
+    res.json(HTTP_PORT);
+});
+
+app.get('/p2p-port', (req,res) => {
+    console.log(p2p.peers);
+    res.json(p2p.P2P_PORT);
 });
 //endpoint only accessible to Admin
 app.get('/settle', (req,res) =>{
