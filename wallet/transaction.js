@@ -8,17 +8,30 @@ class Transaction{
     }
 
     //this function is executed by the wallet that buys tokens
-    static newTransaction (buyerWallet, seller, tokens){ //tokens is an object {name,code,unitPrice,quantity}
+    static newTransaction (buyerWallet, seller, token){ //tokens is an object {name,code,unitPrice,quantity}
         const transaction = new this();
-        const cost = tokens.quantity * tokens.unitPrice;
+        const cost = token.quantity * token.unitPrice;
 
         if(buyerWallet.balance < cost){
             console.log(`Token cost exceeds balance ${buyerWallet.balance}`);
             return;
         }
+        //updatings the tokens for output to add in output array of transaction
+        let tokens = buyerWallet.holdings;
+        let found = false;
+        for(let i=0; i<tokens.length; i++){
+            if(token.code === tokens[i].code){
+                tokens[i].quantity += token.quantity;
+                found = true;
+            }
+        }
+        if(!found) {
+            tokens.push(token);
+        }
+
         transaction.outputs.push(...[
-            {address:buyerWallet.publicKey, amount: buyerWallet.balance - cost, tokens : [tokens]},
-            {address : seller, amount : cost,tokens}
+            {address:buyerWallet.publicKey, amount: buyerWallet.balance - cost, tokens},
+            {address : seller, amount : cost,tokens:token}
         ]);
         Transaction.signTransaction(transaction,buyerWallet);
         return transaction;

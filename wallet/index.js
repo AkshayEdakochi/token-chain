@@ -23,6 +23,7 @@ class Wallet{
 
     createTransaction(seller, token, blockchain, transactionPool){
         this.balance = this.calculateBalance(blockchain);
+        this.holdings = this.getHoldings(blockchain);
         const cost = token.quantity * token.unitPrice;
 
         if(cost > this.balance){
@@ -91,22 +92,26 @@ class Wallet{
         let startTime =0;
         
         if(buyingTransactions.length >0){
+
             const recentbuyingT = buyingTransactions.reduce(
                 (prev,current) =>prev.input.timestamp > current.input.timestamp?prev:current
             );
-            
-            let newTokens = recentbuyingT.outputs.find(output=> output.address === this.publicKey).tokens;
-           for(let i=0; i<newTokens.length; i++){
-               let found = false;
-               for(let j=0; j<holdings.length; j++){
-                   if(newTokens[i].code === holdings[j].code){
-                       holdings[j].quantity += newTokens[i].quantity;
-                       found = true;
-                   }
-               }
-               if(!found) holdings.push(newTokens[i]);
-           }
-           startTime = recentbuyingT.input.timestamp;
+            startTime = recentbuyingT.input.timestamp;
+
+            holdings = recentbuyingT.outputs.find(output=> output.address === this.publicKey).tokens;
+        //    for(let i=0; i<newTokens.length; i++){
+        //        console.log("In loop");
+        //        let found = false;
+        //        for(let j=0; j<holdings.length; j++){
+        //            if(newTokens[i].code === holdings[j].code){
+        //                holdings[j].quantity += newTokens[i].quantity;
+        //                found = true;
+        //            }
+                   
+        //        }
+        //        if(!found) holdings.push(newTokens[i]);
+        //    }
+        //    startTime = recentbuyingT.input.timestamp;
         }
 
         transactions.forEach(transaction =>{
