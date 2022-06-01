@@ -45,6 +45,7 @@ app.post('/buy', (req,res) => {
     // console.log("HAHA " , token.unitPrice);
     const transaction = buyerWallet.createTransaction(seller,token,bc,tp);
     p2p.broadcastTransaction(transaction);
+    p2p.broadcastRemoveToken(token);
     res.redirect('/transactions');
 });
 

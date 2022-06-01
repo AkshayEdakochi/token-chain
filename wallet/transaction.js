@@ -1,3 +1,4 @@
+const Admin = require("../admin");
 const ChainUtil = require("../chain-util");
 
 class Transaction{
@@ -34,6 +35,7 @@ class Transaction{
             {address : seller, amount : cost,tokens:token}
         ]);
         Transaction.signTransaction(transaction,buyerWallet);
+        Admin.removeTokens(token);
         return transaction;
     }
 
@@ -45,7 +47,19 @@ class Transaction{
             return;
         }
         buyerOutput.amount = buyerOutput.amount-cost;
-        buyerOutput.tokens.push(token);
+        //update tokens array, update if token of sam ekind, push new if token
+        //of new kind
+        let found = false;
+        buyerOutput.tokens.forEach(oldToken => {
+            if(oldToken.code === token.code){
+                found = true;
+                oldToken.quantity += token.quantity;
+            }     
+        });
+        if(!found){
+            buyerOutput.tokens.push(token);
+        }
+        
         this.outputs.push({address:seller, amount:cost, token});
 
         Transaction.signTransaction(this,buyerWallet);

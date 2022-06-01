@@ -1,10 +1,12 @@
 const WebSocket = require('ws');
+const Admin = require('../admin');
 // const P2P_PORT = process.env.P2P_PORT || 5001;
 // const peers = process.env.PEERS ? process.env.PEERS.split(','):[];
 const MESSAGE_TYPES = {
     chain : "CHAIN",
     transaction : "TRANSACTION",
-    clear_transactions : "CLEAR_TRANSACTIONS"
+    clear_transactions : "CLEAR_TRANSACTIONS", 
+    remove_token : "REMOVE_TOKEN"
 };
 
 class P2pServer{
@@ -53,6 +55,13 @@ class P2pServer{
             transaction}));
     }
 
+    sendTokenToRemove(socket,token){
+        socket.send(JSON.stringify({
+            type:MESSAGE_TYPES.remove_token,
+            token
+            }));
+    }
+
     messageHandler(socket){
         socket.on('message', message=>{
             const data = JSON.parse(message);
@@ -67,6 +76,8 @@ class P2pServer{
                 case MESSAGE_TYPES.clear_transactions :
                     this.transactionPool.clear();
                     break;
+                case  MESSAGE_TYPES.remove_token:
+                    Admin.removeTokens(data.token);
             }
         });
     }
@@ -88,6 +99,12 @@ class P2pServer{
             socket.send(JSON.stringify({
                 type: MESSAGE_TYPES.clear_transactions
             }));
+        });
+    }
+
+    broadcastRemoveToken(token){
+        this.sockets.forEach(socket =>{
+            this.sendTokenToRemove(socket,token);
         });
     }
 }

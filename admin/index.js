@@ -60,6 +60,21 @@ class Admin{
         return this.marketPlace;
     }
 
+    static removeTokens(rToken){
+        console.log('in remove tokens');
+        console.log(this.marketPlace);
+        this.marketPlace.forEach(token =>{
+            if(token.code === rToken.code){
+                token.quantity -= rToken.quantity;
+                if(token.quantity === 0 ){
+                    console.log(this.marketPlace.indexOf(token));  
+                    this.marketPlace.splice(this.marketPlace.indexOf(token),1);
+                                  }
+            }
+        });
+        console.log(this.marketPlace);
+    }
+
 }
 
 module.exports = Admin;
