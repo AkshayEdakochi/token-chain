@@ -77,6 +77,7 @@ class P2pServer{
                     this.transactionPool.clear();
                     break;
                     //asddsa
+                    //fasdfas
                 case  MESSAGE_TYPES.remove_token:
                     Admin.removeTokens(data.token);
             }
