@@ -76,6 +76,7 @@ class P2pServer{
                 case MESSAGE_TYPES.clear_transactions :
                     this.transactionPool.clear();
                     break;
+                    //asddsa
                 case  MESSAGE_TYPES.remove_token:
                     Admin.removeTokens(data.token);
             }
