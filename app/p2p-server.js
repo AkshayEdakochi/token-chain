@@ -78,6 +78,8 @@ class P2pServer{
                     break;
                     //asddsa
                     //fasdfas
+
+                    //asdfasd
                 case  MESSAGE_TYPES.remove_token:
                     Admin.removeTokens(data.token);
             }
